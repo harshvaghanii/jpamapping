@@ -6,8 +6,6 @@ import com.example.codingshuttle.jpamapping.jpamapping.repositories.DepartmentRe
 import com.example.codingshuttle.jpamapping.jpamapping.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class DepartmentService {
 
@@ -45,5 +43,27 @@ public class DepartmentService {
         if (employeeEntity == null) return null;
         return employeeEntity.getManagedDepartment();
 
+    }
+
+    public DepartmentEntity assignWorkerToDepartment(Long departmentId, Long employeeId) {
+        DepartmentEntity department = departmentRepository.findById(departmentId).orElse(null);
+        EmployeeEntity worker = employeeRepository.findById(employeeId).orElse(null);
+
+        if (department == null || worker == null) return null;
+        worker.setWorkerDepartment(department);
+        employeeRepository.save(worker);
+        department.getWorkers().add(worker);
+        return department;
+    }
+
+    public DepartmentEntity assignFreelancerToDepartment(Long departmentId, Long employeeId) {
+        DepartmentEntity department = departmentRepository.findById(departmentId).orElse(null);
+        EmployeeEntity freeLancer = employeeRepository.findById(employeeId).orElse(null);
+
+        if (department == null || freeLancer == null) return null;
+        freeLancer.getFreelanceEntity().add(department);
+        employeeRepository.save(freeLancer);
+        department.getFreeLancers().add(freeLancer);
+        return department;
     }
 }
